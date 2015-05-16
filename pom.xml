@@ -45,9 +45,14 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty</artifactId>
+                <version>3.10.3.Final</version>
+            </dependency>
+            <dependency>
                 <groupId>com.typesafe.play</groupId>
-                <artifactId>play_2.10</artifactId>
-                <version>2.3.4</version>
+                <artifactId>play_2.11</artifactId>
+                <version>2.4.0-RC3</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -283,7 +288,7 @@
         <surefire.redirectTestOutputToFile>false</surefire.redirectTestOutputToFile>
         <source.property>1.6</source.property>
         <target.property>1.6</target.property>
-        <atmosphere.version>2.2.6</atmosphere.version>
+        <atmosphere.version>2.3.0</atmosphere.version>
     </properties>
 </project>
 

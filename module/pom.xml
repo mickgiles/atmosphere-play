@@ -18,8 +18,12 @@
             <artifactId>atmosphere-runtime</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.typesafe.play</groupId>
-            <artifactId>play_2.10</artifactId>
+            <artifactId>play_2.11</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

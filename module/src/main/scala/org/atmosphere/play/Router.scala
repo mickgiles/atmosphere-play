@@ -15,20 +15,19 @@
  */
 package org.atmosphere.play
 
-import play.api.mvc.Handler
-import play.api.mvc.{RequestHeader=>ScalaRequestHeader}
+import play.api.mvc.{Handler, RequestHeader => ScalaRequestHeader}
 import play.core.j._
-import play.mvc.Http.RequestHeader
 import play.libs.F.Promise
+import play.mvc.Http.RequestHeader
 
 object Router {
 
   private def isWsSupported(upgradeHeader: Option[String], connectionHeaders: Seq[String]): Boolean =
     upgradeHeader.map("websocket".equalsIgnoreCase)
-    .getOrElse(connectionHeaders.contains("upgrade".equalsIgnoreCase _))
+      .getOrElse(connectionHeaders.contains("upgrade".equalsIgnoreCase _))
 
   private def dispatch(requestPath: String,
-                       controllerClass : Class[_<:AtmosphereController],
+                       controllerClass: Class[_ <: AtmosphereController],
                        upgradeHeader: Option[String],
                        connectionHeaders: Seq[String]): Option[Handler] =
 
@@ -36,18 +35,17 @@ object Router {
       None
 
     else {
-      val controller : AtmosphereController =
-        Option(play.api.Play.current.global.getControllerInstance(controllerClass))
-          .getOrElse(controllerClass.newInstance)
+      val controller: AtmosphereController = controllerClass.newInstance
 
       // Netty fail to decode headers separated by a ','
       val javaAction =
         if (isWsSupported(upgradeHeader, connectionHeaders))
           JavaWebSocket.ofString(controller.webSocket)
         else
-          new JavaAction {
+          new JavaAction(play.api.Play.current.injector.instanceOf[JavaHandlerComponents]) {
             val annotations = new JavaActionAnnotations(controllerClass, controllerClass.getMethod("http"))
             val parser = annotations.parser
+
             def invocation = Promise.pure(controller.http)
           }
 
@@ -55,9 +53,9 @@ object Router {
     }
 
   def dispatch(request: RequestHeader): Handler =
-	  dispatch(request, classOf[AtmosphereController])
+    dispatch(request, classOf[AtmosphereController])
 
-  def dispatch(request: RequestHeader, controllerClass : Class[_<:AtmosphereController]): Handler = {
+  def dispatch(request: RequestHeader, controllerClass: Class[_ <: AtmosphereController]): Handler = {
 
     val upgradeHeader = Option(request.getHeader("Upgrade"))
     val connectionHeaders = Option(request.headers.get("Connection")).map(_.toSeq).getOrElse(Seq.empty)
@@ -65,8 +63,8 @@ object Router {
   }
 
   def dispatch(request: ScalaRequestHeader): Option[Handler] =
-	  dispatch(request, classOf[AtmosphereController])
+    dispatch(request, classOf[AtmosphereController])
 
-  def dispatch(request: ScalaRequestHeader, controllerClass : Class[_<:AtmosphereController]): Option[Handler] =
+  def dispatch(request: ScalaRequestHeader, controllerClass: Class[_ <: AtmosphereController]): Option[Handler] =
     dispatch(request.path, controllerClass, request.headers.get("Upgrade"), request.headers.getAll("Connection"))
 }

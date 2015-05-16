@@ -30,7 +30,7 @@ public class AtmosphereUtils {
 
     private static Logger logger = LoggerFactory.getLogger(AtmosphereUtils.class);
 
-    public final static AtmosphereRequest request(final Http.Request request, final Map<String, Object> additionalAttributes) throws Throwable {
+    public static AtmosphereRequest request(final Http.Request request, final Map<String, Object> additionalAttributes) throws Throwable {
         final String base = getBaseUri(request);
         final URI requestUri = new URI(base.substring(0, base.length() - 1) + request.uri());
         String ct = "text/plain";
@@ -50,7 +50,7 @@ public class AtmosphereUtils {
         }
 
         String u = requestUri.toURL().toString();
-        int last = u.indexOf("?") == -1 ? u.length() : u.indexOf("?");
+        int last = !u.contains("?") ? u.length() : u.indexOf("?");
         String url = u.substring(0, last);
         int l = requestUri.getAuthority().length() + requestUri.getScheme().length() + 3;
 
@@ -78,7 +78,7 @@ public class AtmosphereUtils {
 
         URI uri = null;
         try {
-            URI.create(request.remoteAddress());
+            uri = URI.create(request.remoteAddress());
         } catch (IllegalArgumentException e) {
             logger.trace("", e);
         }
@@ -87,7 +87,8 @@ public class AtmosphereUtils {
         String uriString = uri == null ? request.remoteAddress() : uri.toString();
         String host = uri == null ? request.remoteAddress() : uri.getHost();
         AtmosphereRequest.Builder requestBuilder = new AtmosphereRequest.Builder();
-        AtmosphereRequest r = requestBuilder.requestURI(url.substring(l))
+
+        return requestBuilder.requestURI(url.substring(l))
                 .requestURL(u)
                 .pathInfo(url.substring(l))
                 .headers(getHeaders(request))
@@ -100,13 +101,8 @@ public class AtmosphereUtils {
                 .remotePort(port)
                 .remoteAddr(uriString)
                 .remoteHost(host)
-                        //                .localPort(((InetSocketAddress) ctx.getChannel().getLocalAddress()).getPort())
-                        //                .localAddr(((InetSocketAddress) ctx.getChannel().getLocalAddress()).getAddress().getHostAddress())
-                        //                .localName(((InetSocketAddress) ctx.getChannel().getLocalAddress()).getHostName())
                 .inputStream(hasBody ? new ByteArrayInputStream(body) : new ByteArrayInputStream(new byte[]{}))
                 .build();
-
-        return r;
     }
 
 
