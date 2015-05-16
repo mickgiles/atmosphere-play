@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
   <groupId>org.atmosphere</groupId>
-  <artifactId>play-project</artifactId>
+  <artifactId>atmosphere-play</artifactId>
   <versioning>
     <release>2.1.3-PLAY24</release>
     <versions>
       <version>2.1.3-PLAY24</version>
     </versions>
-    <lastUpdated>20150516225950</lastUpdated>
+    <lastUpdated>20150516230034</lastUpdated>
   </versioning>
 </metadata>
